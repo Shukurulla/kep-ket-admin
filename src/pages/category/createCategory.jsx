@@ -17,7 +17,6 @@ const CreateCategory = ({ setState }) => {
     };
     CategoryService.postCategory(dispatch, value);
     setState(false);
-    window.location.reload();
   };
 
   return (

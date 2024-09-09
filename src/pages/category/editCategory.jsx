@@ -17,7 +17,6 @@ const EditCategory = ({ setState, category }) => {
     };
     CategoryService.editCategory(dispatch, category._id, value);
     setState(false);
-    window.location.reload();
   };
 
   return (

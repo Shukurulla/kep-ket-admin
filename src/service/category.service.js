@@ -21,27 +21,30 @@ const CategoryService = {
   async postCategory(dispatch, value) {
     dispatch(getCategoryStart());
     try {
-      const { data } = await axios.post(`/category/`, value);
+      await axios.post(`/category/`, value);
+      const { data } = await axios.get(`category/all/${id}`);
       dispatch(getCategorySuccess(data));
     } catch (error) {
       console.log(error);
       dispatch(getCategoryFailure());
     }
   },
-  async editCategory(dispatch, id, value) {
+  async editCategory(dispatch, categoryId, value) {
     dispatch(getCategoryStart());
     try {
-      const { data } = await axios.put(`/category/${id}`, value);
+      await axios.put(`/category/${categoryId}`, value);
+      const { data } = await axios.get(`category/all/${id}`);
       dispatch(getCategorySuccess(data));
     } catch (error) {
       console.log(error);
       dispatch(getCategoryFailure());
     }
   },
-  async deleteCategory(dispatch, id) {
+  async deleteCategory(dispatch, categoryId) {
     dispatch(getCategoryStart());
     try {
-      const { data } = await axios.delete(`/category/${id}`);
+      await axios.delete(`/category/${categoryId}`);
+      const { data } = await axios.get(`/category/all/${id}`);
       dispatch(getCategorySuccess(data));
     } catch (error) {
       console.log(error);

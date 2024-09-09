@@ -17,7 +17,6 @@ const Category = () => {
 
   const deleteHandler = (id) => {
     CategoryService.deleteCategory(dispatch, id);
-    window.location.reload();
   };
 
   return (

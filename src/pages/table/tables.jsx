@@ -50,11 +50,16 @@ const Tables = () => {
             <tr>
               <td>{idx + 1}</td>
               <td>
-                <img
-                  src={`http://api.qrserver.com/v1/create-qr-code/?data=${`https://restoran/menu/table/${item._id}`}&size=x&bgcolor=`}
-                  className="w-[50px]"
-                  alt=""
-                />
+                <a
+                  target="_blank"
+                  href={`https://unify-liard.vercel.app/table/${item._id}.${item.restaurantId}`}
+                >
+                  <img
+                    src={`http://api.qrserver.com/v1/create-qr-code/?data=${`https://unify-liard.vercel.app/table/${item._id}.${item.restaurantId}`}&size=x&bgcolor=`}
+                    className="w-[50px]"
+                    alt=""
+                  />
+                </a>
               </td>
               <td>{item.tableNumber}</td>
               <td>{item.capacity}</td>

@@ -38,7 +38,7 @@ const Promocode = () => {
 
       await PromoCodeService.postPromoCode(dispatch, value);
     }
-    navigate("/promocode");
+    navigate("/promocodes");
   };
 
   const filteredPromocodes = promocodes.filter((item) => {

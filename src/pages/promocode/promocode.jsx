@@ -38,7 +38,6 @@ const Promocode = () => {
 
       await PromoCodeService.postPromoCode(dispatch, value);
     }
-    window.location.reload();
     navigate("/promocode");
   };
 

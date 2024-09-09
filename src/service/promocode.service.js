@@ -20,7 +20,8 @@ const PromoCodeService = {
   async postPromoCode(dispatch, value) {
     dispatch(getPromoCodeStart());
     try {
-      const { data } = await axios.post(`/promocode/`, value);
+      await axios.post(`/promocode/`, value);
+      const { data } = await axios.get(`/promocode/all/${id}`);
       dispatch(getPromoCodeSuccess(data));
     } catch (error) {
       console.log(error);
@@ -30,7 +31,8 @@ const PromoCodeService = {
   async editPromoCode(dispatch, id, value) {
     dispatch(getPromoCodeStart());
     try {
-      const { data } = await axios.put(`/promocode/${id}`, value);
+      await axios.put(`/promocode/${id}`, value);
+      const { data } = await axios.get(`/promocode/all/${id}`);
       dispatch(getPromoCodeSuccess(data));
     } catch (error) {
       console.log(error);
@@ -40,7 +42,8 @@ const PromoCodeService = {
   async deletePromoCode(dispatch, id) {
     dispatch(getPromoCodeStart());
     try {
-      const { data } = await axios.delete(`/promocode/${id}`);
+      await axios.delete(`/promocode/${id}`);
+      const { data } = await axios.get(`/promocode/all/${id}`);
       dispatch(getPromoCodeSuccess(data));
     } catch (error) {
       console.log(error);

@@ -1,0 +1,9 @@
+.toast-box {
+  position: absolute;
+  z-index: 999999 !important;
+  transform: translateX(110%);
+  transition: 0.3s linear;
+  &.show {
+    transform: translateX(0);
+  }
+}

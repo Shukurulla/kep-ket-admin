@@ -1,0 +1,133 @@
+.side-bar {
+  background-color: #fff;
+  height: 100vh;
+  box-shadow: 0px 20px 20px 0px #0129701a;
+  position: relative;
+  padding: 20px 0;
+  width: 100%;
+  .show-hide {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(100%);
+    background-color: #fff;
+    font-size: 18px;
+    z-index: 999;
+    padding: 5px;
+    border-radius: 0 5px 5px 0;
+    box-shadow: 0px 0px 20px 0px #0129701a;
+    cursor: pointer;
+    color: #012970;
+  }
+  ul {
+    li {
+      list-style: none;
+      padding: 8px 30px;
+      margin: 6px 0;
+      transition: 0.3s;
+      &.active {
+        transform: translateX(10px);
+        a {
+          font-size: 17px;
+          font-weight: 700;
+        }
+      }
+      &:hover {
+        transform: translateX(10px);
+        a {
+          font-size: 17px;
+          font-weight: 700;
+        }
+      }
+      a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: #012970;
+        font-weight: 600;
+        font-size: 16px;
+      }
+    }
+  }
+}
+.side-bar.hide {
+  li {
+    margin-top: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.active {
+      transform: translateX(10px);
+      a {
+        font-size: 17px;
+        font-weight: 700;
+      }
+    }
+    &:hover {
+      transform: translateX(10px);
+      a {
+        font-size: 17px;
+        font-weight: 700;
+      }
+    }
+    span.item {
+      display: none;
+    }
+  }
+  img {
+    width: 20px;
+  }
+}
+@media (max-width: 500px) {
+  .side-bar {
+    position: fixed;
+    width: 100vw;
+    left: 0;
+    z-index: 99;
+    transform: translateY(-110%);
+    transition: 0.2s;
+    &.hide {
+      z-index: 99999;
+      transform: translateY(0);
+      opacity: 1;
+      li {
+        display: flex;
+        justify-content: start;
+        padding-left: 30px;
+        span.item {
+          display: block;
+        }
+      }
+      .show-hide {
+        z-index: 999;
+        top: auto;
+        left: 0;
+        border-radius: 0 0 5px 0;
+        bottom: 100px;
+        transform: translateY(0%);
+        width: 100px;
+        height: 30px;
+        i {
+          transform: rotate(270deg);
+        }
+      }
+    }
+    .show-hide {
+      top: auto;
+      left: 0;
+      bottom: -10%;
+      transform: translateY(100%);
+
+      width: 100px;
+      height: 30px;
+      i {
+        transform: rotate(-90deg);
+      }
+    }
+  }
+}

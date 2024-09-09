@@ -38,10 +38,10 @@ const DishService = {
       dispatch(getDishesFailure());
     }
   },
-  async editDish(dispatch, id, value, navigate) {
+  async editDish(dispatch, categoryId, value, navigate) {
     dispatch(getDishesStart());
     try {
-      await axios.put(`/dishes/${id}`, value);
+      await axios.put(`/dishes/${categoryId}`, value);
       const { data } = await axios.get(`/dishes/${id}`);
       dispatch(getDishesSuccess(data));
       if (data) {
@@ -58,10 +58,10 @@ const DishService = {
       dispatch(getDishesFailure());
     }
   },
-  async deleteDish(dispatch, id, value) {
+  async deleteDish(dispatch, categoryId, value) {
     dispatch(getDishesStart());
     try {
-      await axios.delete(`/dishes/${id}`, value);
+      await axios.delete(`/dishes/${categoryId}`, value);
       const { data } = await axios.get(`/dishes/${id}`);
       dispatch(getDishesSuccess(data));
     } catch (error) {

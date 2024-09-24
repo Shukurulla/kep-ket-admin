@@ -28,10 +28,10 @@ const TableService = {
       dispatch(getTablesFailure());
     }
   },
-  async editTable(dispatch, id, value) {
+  async editTable(dispatch, tableId, value) {
     dispatch(getTablesStart());
     try {
-      await axios.put(`/table/table-edit/${id}`, value);
+      await axios.put(`/table/table-edit/${tableId}`, value);
 
       const { data } = await axios.get(`/table/all-tables/${id}`);
       dispatch(getTablesSuccess(data));
@@ -40,10 +40,10 @@ const TableService = {
       dispatch(getTablesFailure());
     }
   },
-  async deleteTable(dispatch, id) {
+  async deleteTable(dispatch, tableId) {
     dispatch(getTablesStart());
     try {
-      await axios.delete(`/table/table-delete/${id}`);
+      await axios.delete(`/table/table-delete/${tableId}`);
       const { data } = await axios.get(`/table/all-tables/${id}`);
       dispatch(getTablesSuccess(data));
     } catch (error) {

@@ -1,8 +1,8 @@
 import React from "react";
-import "./loading.scss";
+import "./loading.css";
 
 const Loading = () => {
-  return <div class="loader"></div>;
+  return <span class="loader"></span>;
 };
 
 export default Loading;

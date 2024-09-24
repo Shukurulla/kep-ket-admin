@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./tables.scss";
 import TableService from "../../service/table.service";
 import { useDispatch } from "react-redux";

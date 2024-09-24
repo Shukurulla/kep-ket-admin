@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CreateCategory from "./createCategory";
 import EditCategory from "./editCategory";
 import CategoryService from "../../service/category.service";
+import Loading from "../../components/loading/loading.jsx";
+import { changeActivePage } from "../../slice/ui.js";
 
 const Category = () => {
-  const { categories } = useSelector((state) => state.category);
+  const { categories, isLoading } = useSelector((state) => state.category);
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [category, setCategory] = useState();
@@ -15,11 +17,20 @@ const Category = () => {
   };
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    CategoryService.getCategory(dispatch);
+    dispatch(changeActivePage("Kategoriyalar"));
+  }, []);
+
   const deleteHandler = (id) => {
     CategoryService.deleteCategory(dispatch, id);
   };
 
-  return (
+  return isLoading ? (
+    <div className="w-[100%] h-[100%] bg-transparent flex items-center justify-center">
+      <Loading />
+    </div>
+  ) : (
     <div className="md:p-3 lg:py-[20px] py-[30px] px-[10px] ">
       {showCreate ? <CreateCategory setState={setShowCreate} /> : ""}
       {showEdit ? (

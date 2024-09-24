@@ -5,13 +5,20 @@ import CreateTable from "./createTable";
 import EditTable from "./editTable";
 import { useTabs } from "@material-tailwind/react";
 import TableService from "../../service/table.service";
+import Loading from "../../components/loading/loading.jsx";
+import { changeActivePage } from "../../slice/ui.js";
 
 const Tables = () => {
-  const { tables } = useSelector((state) => state.table);
+  const { tables, isLoading } = useSelector((state) => state.table);
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [table, setTable] = useState();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    TableService.getTables(dispatch);
+    dispatch(changeActivePage("Stollar"));
+  }, []);
 
   const editShowHandler = (value) => {
     setTable(value);
@@ -20,10 +27,13 @@ const Tables = () => {
 
   const deleteHandler = (id) => {
     TableService.deleteTable(dispatch, id);
-    window.location.reload();
   };
 
-  return (
+  return isLoading ? (
+    <div className="w-[100%] h-[100%] bg-transparent flex items-center justify-center">
+      <Loading />
+    </div>
+  ) : (
     <div className="md:p-3 lg:py-[20px] py-[30px] px-[10px] ">
       {showCreate ? <CreateTable setState={setShowCreate} /> : ""}
       {showEdit ? <EditTable setState={setShowEdit} table={table} /> : ""}

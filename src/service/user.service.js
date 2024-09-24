@@ -21,9 +21,10 @@ const UserService = {
           navigate("/home");
         }
       }
+
       return data;
-    } catch (error) {
-      console.log(error);
+    } catch ({ response }) {
+      localStorage.clear();
       dispatch(getUserFailure());
     }
   },
@@ -60,6 +61,7 @@ const UserService = {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.restaurant._id);
         navigate("/home");
+        window.location.reload();
         dispatch(
           showToast({
             status: "success",

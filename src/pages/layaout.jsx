@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../components/navbar/navbar";
 import Sidebar from "../components/sidebar/sidebar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import Loading from "../components/loading/loading.jsx";
+import { useNavigate } from "react-router-dom";
+import UserService from "../service/user.service.js";
 
 const Layaout = ({ activPage }) => {
   const { showSide } = useSelector((state) => state.ui);
-  return (
+  const { isLoading } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    UserService.getUser(dispatch, navigate);
+  }, []);
+
+  return isLoading ? (
+    <div className="w-[100%] h-[100vh] bg-white flex items-center justify-center">
+      <Loading />
+    </div>
+  ) : (
     <div>
       <Navbar />
       <div className="row">

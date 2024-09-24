@@ -17,6 +17,12 @@ import EditDish from "./components/foodDetails/edit";
 import Tables from "./pages/table/tables";
 import Promocode from "./pages/promocode/promocode";
 import Category from "./pages/category/category";
+import Orders from "./pages/orders/orders";
+import axios from "./service/api";
+import OrderService from "./service/order.service";
+import Loading from "./components/loading/loading.jsx";
+import Home from "./pages/home/home.jsx";
+import Report from "./pages/report/report.jsx";
 
 const App = () => {
   const { user, isLoading } = useSelector((state) => state.user);
@@ -27,19 +33,17 @@ const App = () => {
     if (localStorage.getItem("token")) {
       UserService.getUser(dispatch, navigate);
       WaiterService.getWaiters(dispatch);
-      TableService.getTables(dispatch);
-      CategoryService.getCategory(dispatch);
-      PromoCodeService.getPromoCode(dispatch);
-      DishService.getDish(dispatch);
     } else {
       navigate("/login");
     }
   }, []);
+
   return (
     <div className="w-[100vw] overflow-x-hidden relative">
       <Toast />
       <Routes>
-        <Route path="/:slug" element={<Layaout />} />
+        <Route path="/report" element={<Layaout activPage={<Report />} />} />
+        <Route path="/home" element={<Layaout activPage={<Home />} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dish" element={<Layaout activPage={<Dish />} />} />
@@ -57,6 +61,8 @@ const App = () => {
           path="/category"
           element={<Layaout activPage={<Category />} />}
         />
+        <Route path="/orders" element={<Orders />} />
+
         <Route path="/login" element={<Login />} />
       </Routes>
     </div>

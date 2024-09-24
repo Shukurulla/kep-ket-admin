@@ -3,7 +3,7 @@
   height: 100vh;
   box-shadow: 0px 20px 20px 0px #0129701a;
   position: relative;
-  padding: 20px 0;
+  padding: 0px 0;
   width: 100%;
   .show-hide {
     position: absolute;
@@ -25,9 +25,10 @@
   ul {
     li {
       list-style: none;
-      padding: 8px 30px;
-      margin: 6px 0;
+      padding: 0 30px;
+      margin: 4px 0;
       transition: 0.3s;
+      width: 100%;
       &.active {
         transform: translateX(10px);
         a {
@@ -56,8 +57,7 @@
 }
 .side-bar.hide {
   li {
-    margin-top: 10px;
-    padding: 10px;
+    padding: 6px 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,7 +80,7 @@
     }
   }
   img {
-    width: 20px;
+    width: 18px;
   }
 }
 @media (max-width: 500px) {

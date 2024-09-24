@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PromoCodeService from "../../service/promocode.service";
 import { useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
+import Loading from "../../components/loading/loading.jsx";
+import { changeActivePage } from "../../slice/ui.js";
 
 const Promocode = () => {
   const { promocodes = [], isLoading } = useSelector(
@@ -10,11 +12,16 @@ const Promocode = () => {
   );
   const f = new Intl.NumberFormat("es-sp");
   const [filter, setFilter] = useState("all");
-  const [discount, setDiscount] = useState(0);
-  const [promocodeCount, setPromocodeCount] = useState(1);
+  const [discount, setDiscount] = useState("chegirma ");
+  const [promocodeCount, setPromocodeCount] = useState("promocode soni");
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    PromoCodeService.getPromoCode(dispatch);
+    dispatch(changeActivePage("Pormo Codlar"));
+  }, []);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -58,7 +65,11 @@ const Promocode = () => {
     setCurrentPage(selected);
   };
 
-  return (
+  return isLoading ? (
+    <div className="w-[100%] h-[100%] bg-transparent flex items-center justify-center">
+      <Loading />
+    </div>
+  ) : (
     <div className="md:p-3 lg:py-[20px] py-[30px] px-[10px]">
       <h4 className="font-nunito page-label font-[600]">Promocodelar</h4>
       <p className="font-nunito page-path pt-1">Promocodelar /</p>

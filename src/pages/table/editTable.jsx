@@ -20,7 +20,6 @@ const EditTable = ({ setState, table }) => {
       TableService.editTable(dispatch, table._id, value);
       TableService.getTables(dispatch);
       setState(false);
-      window.location.reload();
     } catch (error) {}
   };
 

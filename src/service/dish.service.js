@@ -51,7 +51,6 @@ const DishService = {
             alert: "Taom muaffaqiyatli ozgartirildi",
           })
         );
-        window.location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -64,6 +63,19 @@ const DishService = {
       await axios.delete(`/dishes/${categoryId}`, value);
       const { data } = await axios.get(`/dishes/${id}`);
       dispatch(getDishesSuccess(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(getDishesFailure());
+    }
+  },
+  async getDishId(dispatch, categoryId) {
+    dispatch(getDishesStart());
+    try {
+      const { data } = await axios.get(`/dishes/by-id/${categoryId}`);
+      if (data) {
+        dispatch(getDishesFailure());
+      }
+      return data;
     } catch (error) {
       console.log(error);
       dispatch(getDishesFailure());

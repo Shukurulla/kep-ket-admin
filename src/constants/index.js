@@ -16,6 +16,11 @@ export const navItems = [
     path: "/report",
   },
   {
+    label: "Buyurtmalar",
+    icon: chart,
+    path: "/orders",
+  },
+  {
     label: "Ovqatlar",
     icon: resource,
     path: "/dish",

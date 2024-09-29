@@ -41,7 +41,7 @@ const Category = () => {
       <h4 className="font-nunito page-label font-[600]">Kategoriyalar</h4>
       <p className="font-nunito page-path pt-1">Kategoriyalar /</p>
       <div className="flex items-center justify-between">
-        <h1 className="text-[20px]">Kategoriyalar </h1>
+        <h1 className="text-[20px]"> </h1>
         <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
           + Qoshish
         </button>

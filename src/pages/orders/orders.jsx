@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import OrderComponent from "../../components/orderComponent.jsx";
 import Loading from "../../components/loading/loading.jsx";
 import OrderService from "../../service/order.service.js";
+import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
   const { orders, isLoading } = useSelector((state) => state.order);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     OrderService.getOrder(dispatch);
@@ -18,15 +20,20 @@ const Orders = () => {
       <Loading />
     </div>
   ) : (
-    <div className=" py-[60px] h-[100vh] overflow-x-hidden overflow-y-scroll">
-      <div className="row container">
-        {orders.map((item) => (
-          <div className="col-lg-3 col-md-4 col-sm-6 col-12">
-            <OrderComponent item={item} />
-          </div>
-        ))}
+    <>
+      <button className="btn btn-primary m-2" onClick={() => navigate("/home")}>
+        <i className="bi bi-arrow-left"></i>
+      </button>
+      <div className="py-[60px] h-[100vh] overflow-x-hidden overflow-y-scroll">
+        <div className="row container">
+          {orders.map((item) => (
+            <div className="col-lg-3 col-md-4 col-sm-6 col-12">
+              <OrderComponent item={item} />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -60,6 +60,7 @@ const Create = () => {
 
   const changeFile = (e) => {
     setFile(e.target.files[0]);
+
     setLabelImage(URL.createObjectURL(e.target.files[0]));
   };
 

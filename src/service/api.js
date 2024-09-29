@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "https://kep-ket-api.vercel.app/api";
+axios.defaults.baseURL = import.meta.env.VITE_API;
 axios.interceptors.request.use((option) => {
   const token = localStorage.getItem("token")
     ? localStorage.getItem("token")

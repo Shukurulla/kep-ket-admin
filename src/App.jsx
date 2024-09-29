@@ -24,10 +24,18 @@ import Loading from "./components/loading/loading.jsx";
 import Home from "./pages/home/home.jsx";
 import Report from "./pages/report/report.jsx";
 
+const Redirect = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate("/home");
+  }, []);
+};
+
 const App = () => {
   const { user, isLoading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log(import.meta.env.VITE_API);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -42,6 +50,7 @@ const App = () => {
     <div className="w-[100vw] overflow-x-hidden relative">
       <Toast />
       <Routes>
+        <Route path="/" element={<Redirect />} />
         <Route path="/report" element={<Layaout activPage={<Report />} />} />
         <Route path="/home" element={<Layaout activPage={<Home />} />} />
         <Route path="/login" element={<Login />} />

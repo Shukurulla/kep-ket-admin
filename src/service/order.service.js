@@ -52,5 +52,16 @@ const OrderService = {
       dispatch(getOrderFailure());
     }
   },
+  async postNotification(dispatch, value) {
+    dispatch(getOrderStart());
+    try {
+      await axios.post("/notifications", value);
+      const { data } = await axios.get(`/orders/all/${id}`);
+      dispatch(getOrderSuccess(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(getOrderFailure());
+    }
+  },
 };
 export default OrderService;

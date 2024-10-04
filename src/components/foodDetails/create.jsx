@@ -26,6 +26,8 @@ const Create = () => {
     formData.append("upload_preset", "restoran-order");
     formData.append("cloud_name", "djsdapm3z");
 
+    console.log(formData);
+
     await fetch("https://api.cloudinary.com/v1_1/djsdapm3z/image/upload", {
       method: "POST",
       body: formData,
@@ -43,7 +45,6 @@ const Create = () => {
           image: data.secure_url,
           restourantId: localStorage.getItem("userId"),
         });
-        navigate("/dish");
       })
       .catch((err) => {
         console.log(err);

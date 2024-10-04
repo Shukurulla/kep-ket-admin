@@ -1,5 +1,6 @@
 import {
   getWaiterFailure,
+  getWaiterServiceInfo,
   getWaiterStart,
   getWaiterSuccess,
 } from "../slice/waiter.slice";
@@ -37,9 +38,19 @@ const WaiterService = {
   async deleteWaiters(dispatch, id) {
     dispatch(getWaiterStart());
     try {
-      const { data } = await axios.deletes(`/waiter/${id}`);
+      const { data } = await axios.delete(`/waiter/${id}`);
       dispatch(getWaiterSuccess(data));
     } catch (error) {
+      dispatch(getWaiterFailure());
+    }
+  },
+  async getWaiterService(dispatch) {
+    dispatch(getWaiterStart());
+    try {
+      const { data } = await axios.get("/waiter/waiters-info");
+      dispatch(getWaiterServiceInfo(data));
+    } catch (error) {
+      console.log(error);
       dispatch(getWaiterFailure());
     }
   },

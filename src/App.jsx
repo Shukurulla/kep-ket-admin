@@ -23,6 +23,8 @@ import OrderService from "./service/order.service";
 import Loading from "./components/loading/loading.jsx";
 import Home from "./pages/home/home.jsx";
 import Report from "./pages/report/report.jsx";
+import Waiters from "./pages/waiter/waiters.jsx";
+import Kassa from "./pages/kassa/kassa.jsx";
 
 const Redirect = () => {
   const navigate = useNavigate();
@@ -35,7 +37,6 @@ const App = () => {
   const { user, isLoading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(import.meta.env.VITE_API);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -55,6 +56,7 @@ const App = () => {
         <Route path="/home" element={<Layaout activPage={<Home />} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/kassa" element={<Kassa />} />
         <Route path="/dish" element={<Layaout activPage={<Dish />} />} />
         <Route path="/add-food" element={<Layaout activPage={<Create />} />} />
         <Route
@@ -62,6 +64,7 @@ const App = () => {
           element={<Layaout activPage={<EditDish />} />}
         />
         <Route path="/tables" element={<Layaout activPage={<Tables />} />} />
+        <Route path="/waiters" element={<Layaout activPage={<Waiters />} />} />
         <Route
           path="/promocodes"
           element={<Layaout activPage={<Promocode />} />}

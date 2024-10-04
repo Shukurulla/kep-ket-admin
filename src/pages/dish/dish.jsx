@@ -4,6 +4,7 @@ import DishService from "../../service/dish.service";
 import { Link } from "react-router-dom";
 import Loading from "../../components/loading/loading.jsx";
 import { changeActivePage } from "../../slice/ui.js";
+import CategoryService from "../../service/category.service.js";
 
 const Dish = () => {
   const [select, setSelect] = useState("all");
@@ -13,6 +14,7 @@ const Dish = () => {
 
   useEffect(() => {
     DishService.getDish(dispatch);
+    CategoryService.getCategory(dispatch);
     dispatch(changeActivePage("Ovqatlar"));
   }, []);
 
@@ -55,10 +57,13 @@ const Dish = () => {
                 className="card shadow-sm p-1"
                 style={{ backgroundColor: "#fff" }}
               >
-                <div className="card-image" style={{ height: "130px" }}>
+                <div
+                  className="card-image flex p-2 items-center justify-center"
+                  style={{ height: "130px" }}
+                >
                   <img
                     src={item.image}
-                    className="w-100 rounded h-100"
+                    className="w-[180px] h-[180px] rounded h-100"
                     alt=""
                   />
                 </div>

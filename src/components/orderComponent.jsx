@@ -81,10 +81,7 @@ const OrderComponent = ({ item }) => {
   };
 
   const allSelect = () => {
-    let diferentFoods = item.prepared.map((item) =>
-      item.items.map((food) => item.id !== food.id)
-    );
-    console.log(diferentFoods);
+    for (let i = 0; i < item.item.length; i++) {}
   };
 
   return (

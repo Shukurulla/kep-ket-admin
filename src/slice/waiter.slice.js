@@ -5,6 +5,7 @@ const waiterSlice = createSlice({
   initialState: {
     isLoading: false,
     waiters: [],
+    waiterServiceInfo: [],
   },
   reducers: {
     getWaiterStart: (state) => {
@@ -17,9 +18,17 @@ const waiterSlice = createSlice({
     getWaiterFailure: (state) => {
       state.isLoading = false;
     },
+    getWaiterServiceInfo: (state, action) => {
+      state.isLoading = false;
+      state.waiterServiceInfo = action.payload;
+    },
   },
 });
 
-export const { getWaiterFailure, getWaiterStart, getWaiterSuccess } =
-  waiterSlice.actions;
+export const {
+  getWaiterFailure,
+  getWaiterStart,
+  getWaiterSuccess,
+  getWaiterServiceInfo,
+} = waiterSlice.actions;
 export default waiterSlice.reducer;

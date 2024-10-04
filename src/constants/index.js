@@ -5,15 +5,15 @@ import checkList from "../../public/check-list.png";
 import setting from "../../public/setting-sidebar.png";
 
 export const navItems = [
-  {
-    label: "Bosh sahifa",
-    icon: cubes,
-    path: "/home",
-  },
+  // {
+  //   label: "Bosh sahifa",
+  //   icon: cubes,
+  //   path: "/home",
+  // },
   {
     label: "Hisobotlar",
     icon: chart,
-    path: "/report",
+    path: "/home",
   },
   {
     label: "Buyurtmalar",
@@ -41,8 +41,13 @@ export const navItems = [
     path: "/category",
   },
   {
-    label: "Sozlamalar",
+    label: "Ofitsiyantlar",
+    icon: checkList,
+    path: "/waiters",
+  },
+  {
+    label: "Kassa",
     icon: setting,
-    path: "/setting",
+    path: "/kassa",
   },
 ];

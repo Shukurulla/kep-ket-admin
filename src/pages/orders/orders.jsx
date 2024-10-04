@@ -25,12 +25,27 @@ const Orders = () => {
         <i className="bi bi-arrow-left"></i>
       </button>
       <div className="py-[60px] h-[100vh] overflow-x-hidden overflow-y-scroll">
-        <div className="row container">
-          {orders.map((item) => (
-            <div className="col-lg-3 col-md-4 col-sm-6 col-12">
-              <OrderComponent item={item} />
+        <div
+          className={`row ${
+            orders.filter((c) => c.payment == false).length > 0
+              ? "container"
+              : ""
+          }`}
+        >
+          {orders.filter((c) => c.payment == false).length > 0 ? (
+            orders
+              .filter((c) => c.payment == false)
+              .map((item) => (
+                <div className="col-lg-3 col-md-4 col-sm-6 col-12">
+                  <OrderComponent item={item} />
+                </div>
+              ))
+          ) : (
+            <div className="w-[100vw] h-[50vh] flex items-center justify-center">
+              {" "}
+              <h2 className="font-nunito">Buyurtmalar Topilmadi</h2>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </>

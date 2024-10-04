@@ -7,6 +7,7 @@ import TableReducer from "../slice/table.slice.js";
 import DishReducer from "../slice/dish.slice.js";
 import CategoryReducer from "../slice/category.slice.js";
 import PromocodeReducer from "../slice/promocode.slice.js";
+import KassaReducer from "../slice/kassa.slice.js";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     dish: DishReducer,
     category: CategoryReducer,
     promocode: PromocodeReducer,
+    kassa: KassaReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
 });

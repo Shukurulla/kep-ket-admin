@@ -32,7 +32,6 @@ const UserService = {
     dispatch(getUserStart());
     try {
       const { data } = await axios.post("/restaurants", user);
-      console.log(data);
 
       dispatch(getUserSuccess(data.restaurant));
       if (data.token) {

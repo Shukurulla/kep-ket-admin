@@ -35,7 +35,7 @@ const Login = () => {
 
   return (
     <div className="wrapper">
-      <form onSubmit={(e) => loginHandler(e)} className="w-50">
+      <form onSubmit={(e) => loginHandler(e)} className="sm:w-50 w-[90%]">
         <div className="label font-poppins">Login to Your Account</div>
         <p className="font-open-sans">
           Kirish uchun foydalanuvchi username va parolingizni kiriting

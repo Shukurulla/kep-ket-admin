@@ -39,7 +39,7 @@ const Navbar = () => {
         <div className="user">
           <div
             onClick={() => setShowDrowMenu(!showDropMenu)}
-            className="drop-menu font-poppins flex gap-2 items-center"
+            className="drop-menu text-end font-poppins flex gap-2 items-center"
           >
             {user?.name} <img src={Down} className="h-100" alt="" />
           </div>

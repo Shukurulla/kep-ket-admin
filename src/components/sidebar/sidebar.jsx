@@ -50,37 +50,6 @@ const Sidebar = () => {
             </li>
           </ListItemButton>
         ))}
-        <ListItemButton>
-          <li
-            className={`cursor-pointer ${
-              activePage == "Chiqish" ? "active" : ""
-            }`}
-            onClick={() => logoutHandler()}
-          >
-            <span
-              className="flex gap-2 items-center"
-              onClick={() =>
-                window.innerWidth < 500 ? changeSideHandler(!showSide) : ""
-              }
-            >
-              <img
-                src={logout}
-                className={showSide ? "" : "w-[30px]"}
-                alt={""}
-              />
-              <span
-                className={`font-nunito item font-[600] text-[#012970] ${
-                  showSide ? "show" : "hide"
-                }`}
-              >
-                <ListItemText
-                  primary="Chiqish"
-                  style={{ fontFamily: '"Montserrat", sans-serif' }}
-                />
-              </span>
-            </span>
-          </li>
-        </ListItemButton>
       </ul>
       <div className="show-hide" onClick={() => changeSideHandler(!showSide)}>
         <i className={`bi bi-chevron-bar-${showSide ? "left" : "right"}`}></i>

@@ -11,7 +11,7 @@ export const navItems = [
   //   path: "/home",
   // },
   {
-    label: "Hisobotlar",
+    label: "Bosh sahifa",
     icon: chart,
     path: "/home",
   },

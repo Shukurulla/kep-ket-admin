@@ -25,12 +25,15 @@ const Navbar = () => {
       )}
       <nav>
         <div className="logo">
-          <Link to="/home">
+          <Link to="/home" className="flex items-center">
             <img
               src={user?.restaurantLogo}
-              className="w-[100px] h-[50px] sm:w-[120px]"
+              className="w-[80px] h-[50px] sm:w-[80px]"
               alt=""
-            />
+            />{" "}
+            <span className="text-[30px] font-nunito font-[700] ">
+              {user.brand}
+            </span>
           </Link>
         </div>
         <div className="user">

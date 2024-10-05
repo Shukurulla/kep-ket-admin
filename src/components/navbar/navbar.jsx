@@ -11,7 +11,7 @@ const Navbar = () => {
   const [showDropMenu, setShowDrowMenu] = useState(false);
 
   const logout = () => {
-    localStorage.removeItem("jwt");
+    localStorage.clear();
     window.location.reload();
   };
 

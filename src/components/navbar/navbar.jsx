@@ -32,7 +32,7 @@ const Navbar = () => {
               alt=""
             />{" "}
             <span className="text-[30px] font-nunito font-[700] ">
-              {user.brand}
+              {user?.brand}
             </span>
           </Link>
         </div>

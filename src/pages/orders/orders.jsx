@@ -36,7 +36,7 @@ const Orders = () => {
             orders
               .filter((c) => c.payment == false)
               .map((item) => (
-                <div className="col-lg-3 col-md-4 col-sm-6 col-12">
+                <div className="col-lg-3 col-md-4 mb-[60px] col-sm-6 col-12">
                   <OrderComponent item={item} />
                 </div>
               ))

@@ -4,14 +4,23 @@ import checkImage from "../../public/check-image.png";
 import orderTime from "../../public/order-time.png";
 import { useDispatch } from "react-redux";
 import OrderService from "../service/order.service.js";
+import { useSelector } from "react-redux";
+import DishService from "../service/dish.service.js";
 
 const OrderComponent = ({ item }) => {
   const createdAt = new Date(item.createdAt); // Qo'shilgan vaqtni oling
   const [timeDifference, setTimeDifference] = useState("00:00");
   const [timeColor, setTimeColor] = useState("");
   const [selectFood, setSelectFood] = useState([]);
-
+  const { dishes } = useSelector((state) => state.dish);
   const dispatch = useDispatch();
+  const { waiters } = useSelector((state) => state.waiter);
+
+  const findDish = (dish) => {
+    const thisDish = dishes.filter((c) => c._id == dish.id)[0];
+
+    return thisDish;
+  };
 
   const updateTimer = () => {
     const now = new Date();
@@ -36,6 +45,8 @@ const OrderComponent = ({ item }) => {
   };
 
   useEffect(() => {
+    DishService.getDish(dispatch);
+
     const timer = setInterval(updateTimer, 1000); // Har bir soniyada yangilanadi
     return () => clearInterval(timer); // Komponent unmount qilinganda timer to'xtaydi
   }, []);
@@ -45,22 +56,22 @@ const OrderComponent = ({ item }) => {
 
     const findFood = item.prepared
       .concat(selectFood)
-      .filter((c) => c.id == food.id);
+      .filter((c) => c.mealId == food.mealId);
+
     if (findFood.length > 0) {
-      return setSelectFood(selectFood.filter((c) => c.id !== food.id));
-    } else if (item.prepared.filter((c) => c.id == food.id).length > 0) {
+      return setSelectFood(selectFood.filter((c) => c.foodId !== food.id));
+    } else if (
+      item.prepared.filter((c) => c.mealId == food.mealId).length > 0
+    ) {
       return setSelectFood(selectFood);
     } else {
       setSelectFood(selectFood.concat(arr));
-      if (selectFood == []) {
+      if (selectFood.length === 0) {
         setSelectFood(arr);
       }
     }
   };
 
-  useEffect(() => {
-    console.log(item.prepared.concat(selectFood));
-  }, [selectFood]);
   const schema = {
     table: {
       id: item.tableNumber.id,
@@ -68,7 +79,9 @@ const OrderComponent = ({ item }) => {
     },
     waiter: {
       id: item.waiter.id,
-      name: item.waiter.name,
+      name: item.waiter.name
+        ? item.waiter.name
+        : waiters.filter((c) => c._id == item.waiter.id)[0]?.username,
     },
     orderId: item._id,
     meals: selectFood,
@@ -78,6 +91,7 @@ const OrderComponent = ({ item }) => {
 
   const submitHandler = () => {
     OrderService.postNotification(dispatch, schema);
+    console.log(schema);
   };
 
   const allSelect = () => {
@@ -87,7 +101,12 @@ const OrderComponent = ({ item }) => {
   return (
     <div className="relative bg-white p-4 rounded-[30px]">
       <div className="waiter-name absolute top-[0] left-[50%] font-[] translate-x-[-50%] translate-y-[-50%] bg-[#EDF2F6] p-2 rounded-[10px] border-[1px] border-[#000] ">
-        <p className="font-[700]"> {item.waiter.name}</p>
+        <p className="font-[700]">
+          {" "}
+          {item.waiter?.name
+            ? item.waiter.name
+            : waiters.filter((c) => c._id == item.waiter.id)[0]?.username}
+        </p>
       </div>
       <div className="order-header mt-3 flex items-center justify-between">
         <div className="table-number p-[20px] bg-[#EDF2F6] rounded-[20px] text-[20px] font-[700] border-[1px] border-[#DEE2E6]">
@@ -111,33 +130,52 @@ const OrderComponent = ({ item }) => {
         </div>
       </div>
       <div className="items">
-        {item.items.map((food) => (
-          <div className="flex justify-between mt-2" key={food.dish.name}>
-            <p className="font-[700] text-[#393939]">{food.dish.name}</p>{" "}
-            <span className="flex gap-2 items-center  ">
-              {food.quantity}{" "}
-              <div
-                onClick={() =>
-                  selectionHandler({ name: food.dish.name, id: food.dish.id })
-                }
-                className="w-[25px] m-0 p-0 h-[25px] border-[1px] border-[#949393] cursor-pointer flex items-center justify-center bg-[#EDF2F6] rounded-[5px]"
-              >
-                {item.prepared.filter((c) => c.id == food.dish.id).length >
-                0 ? (
-                  <img src={checkImage} className="w-[15px] h-[15px] " alt="" />
-                ) : (
-                  ""
-                )}{" "}
-                {selectFood.filter((c) => c.id == food.dish.id).length > 0 ? (
-                  <img src={checkImage} className="w-[15px] h-[15px] " alt="" />
-                ) : (
-                  ""
-                )}
-              </div>
-            </span>
-          </div>
-        ))}
+        {dishes &&
+          item.items.map((food) => (
+            <div className="flex justify-between mt-2" key={food._id}>
+              {" "}
+              {/* food._id kalit sifatida ishlatilmoqda */}
+              <p className="font-[700] text-[#393939]">{food.dish.name}</p>{" "}
+              <span className="flex gap-2 items-center  ">
+                {food.quantity}{" "}
+                <div
+                  onClick={() =>
+                    selectionHandler({
+                      foodName: food.dish.name,
+                      foodId: food.dish.id,
+                      foodPrice: food.dish.price,
+                      quantity: food.quantity,
+                      foodImage: findDish(food.dish).image,
+                      mealId: food._id,
+                    })
+                  }
+                  className="w-[25px] m-0 p-0 h-[25px] border-[1px] border-[#949393] cursor-pointer flex items-center justify-center bg-[#EDF2F6] rounded-[5px]"
+                >
+                  {item.prepared.filter((c) => c.mealId == food._id).length >
+                  0 ? (
+                    <img
+                      src={checkImage}
+                      className="w-[15px] h-[15px]"
+                      alt=""
+                    />
+                  ) : (
+                    ""
+                  )}{" "}
+                  {selectFood.filter((c) => c.mealId == food._id).length > 0 ? (
+                    <img
+                      src={checkImage}
+                      className="w-[15px] h-[15px]"
+                      alt=""
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </span>
+            </div>
+          ))}
       </div>
+
       <div className="flex justify-center mt-2">
         <button
           onClick={() => submitHandler()}

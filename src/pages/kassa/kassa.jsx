@@ -12,6 +12,7 @@ const Kassa = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [item, setItem] = useState({});
   const kassa = useSelector((state) => state.kassa);
+  const { waiters } = useSelector((state) => state.waiter);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,7 +31,9 @@ const Kassa = () => {
         id: item.tableNumber.id,
       },
       waiter: {
-        name: item.waiter.name,
+        name: item.waiter?.name
+          ? item.waiter.name
+          : waiters.filter((c) => c._id == item.waiter.id)[0]?.username,
         id: item.waiter.id,
       },
       meals: item.items,
@@ -132,14 +135,21 @@ const Kassa = () => {
               : ""
           }`}
         >
-          {orders.filter((c) => c.payment == false).length > 0 ? (
+          {orders.filter((c) => c.payment == false && c.showOrder == true)
+            .length > 0 ? (
             orders
               .filter((c) => c.payment == false)
               .map((item) => (
                 <div className="col-lg-4 col-md-4 col-sm-6 col-12">
                   <div className="relative bg-white p-4  rounded-[30px]">
                     <div className="waiter-name absolute top-[0] left-[50%] font-nunito translate-x-[-50%] translate-y-[-50%] bg-[#EDF2F6] p-2 rounded-[10px] border-[1px] border-[#000] ">
-                      <p className="font-[700]"> {item.waiter.name}</p>
+                      <p className="font-[700]">
+                        {" "}
+                        {item.waiter?.name
+                          ? item.waiter.name
+                          : waiters.filter((c) => c._id == item.waiter.id)[0]
+                              ?.username}
+                      </p>
                     </div>
                     <div className="order-header mt-3 flex items-center justify-between">
                       <div className="table-number p-[20px] bg-[#EDF2F6] rounded-[20px] text-[20px] font-[700] border-[1px] border-[#DEE2E6]">

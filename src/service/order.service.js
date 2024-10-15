@@ -11,6 +11,16 @@ const OrderService = {
   async getOrder(dispatch) {
     dispatch(getOrderStart());
     try {
+      const { data } = await axios.get(`/orders/show-orders/${id}`);
+      dispatch(getOrderSuccess(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(getOrderFailure());
+    }
+  },
+  async getAllOrders(dispatch) {
+    dispatch(getOrderStart());
+    try {
       const { data } = await axios.get(`/orders/all/${id}`);
       dispatch(getOrderSuccess(data));
     } catch (error) {

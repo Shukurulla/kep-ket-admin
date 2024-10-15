@@ -3,9 +3,7 @@ import {
   getReportsStart,
   getReportsSuccess,
 } from "../slice/kassa.slice.js";
-import ordersSlice from "../slice/orders.slice.js";
 import axios from "./api.js";
-import OrderService from "./order.service.js";
 
 const KassaService = {
   async getKassa(dispatch) {

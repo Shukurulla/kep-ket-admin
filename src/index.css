@@ -45,3 +45,6 @@ body {
 body a {
   text-decoration: none;
 }
+.apexcharts-legend {
+  display: none !important;
+}

@@ -25,7 +25,7 @@ const Waiters = () => {
   ) : (
     <div className="md:p-3 lg:py-[20px] py-[30px] px-[10px]">
       <h4 className="font-nunito page-label font-[600]">Ofitsiyantlar</h4>
-      <p className="font-nunito page-path pt-1">Ofitsiyantlar /</p>
+      <p className="font-nunito page-path pt-1">Ofitsiyantlar / </p>
       <div className="row">
         {waiterServiceInfo.map((item) => (
           <div className="col-lg-4 col-md-6 mt-3 col-sm-12">

@@ -44,7 +44,7 @@ const Navbar = () => {
             {user?.name} <img src={Down} className="h-100" alt="" />
           </div>
           {showDropMenu ? (
-            <div className="drop-down">
+            <div className="drop-down shadow rounded-[10px]">
               <Link
                 to="/setting"
                 onClick={() => setShowDrowMenu(!showDropMenu)}

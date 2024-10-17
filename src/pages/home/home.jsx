@@ -90,7 +90,7 @@ const Home = () => {
       </div>
       <div className="row statistika">
         <div className="col-lg-8 col-md-8 col-sm-12">
-          <div className="p-4 rounded-[15px] bg-white">
+          <div className="p-4 shadow rounded-[15px] bg-white">
             <div className="">
               <div className="flex items-center justify-between">
                 <h1 className="font-[700] text-[20px]">Stollar statistikasi</h1>
@@ -106,7 +106,7 @@ const Home = () => {
           </div>
         </div>
         <div className="col-lg-4 col-md-4 col-sm-12">
-          <div className="dish bg-white p-[16px] rounded-[15px] ">
+          <div className="dish shadow bg-white p-[16px] rounded-[15px] ">
             <h1 className="font-[700] text-[20px]">Top buyurtma</h1>
             {uniqueOrders.slice(0, 4).map((item) => (
               <div className="bg-white py-3 border-b-[#CDD0D5] border-b-[1px]  relative ">

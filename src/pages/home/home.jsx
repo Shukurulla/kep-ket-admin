@@ -10,10 +10,13 @@ import KassaService from "../../service/kassa.service.js";
 import BrowserShareChart from "../../components/chart/report.chart.jsx";
 import ShigimChart from "../../components/chart/shigim.chart.jsx";
 import filterOrdersByPeriod from "../../utilities/sortArrayDate.js";
+import Loading from "../../components/loading/loading.jsx";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { waiters, waiterServiceInfo } = useSelector((state) => state.waiter);
+  const { waiters, waiterServiceInfo, isLoading } = useSelector(
+    (state) => state.waiter
+  );
   const { orders } = useSelector((state) => state.order);
   const report = useSelector((state) => state.kassa);
   const [dateParam, setDateParam] = useState("Bir Kun");
@@ -81,11 +84,15 @@ const Home = () => {
       <p className="font-nunito page-path pt-1">Bosh sahifa /</p>
       <div className="waiters my-3">
         <div className="row">
-          {waiterServiceInfo.slice(0, 3).map((item) => (
-            <div className="col-lg-4 col-md-6 col-sm-6 col-12">
-              <WaiterBox waiter={item} />
-            </div>
-          ))}
+          {isLoading ? (
+            <Loading />
+          ) : (
+            waiterServiceInfo.slice(0, 3).map((item) => (
+              <div className="col-lg-4 col-md-6 col-sm-6 col-12">
+                <WaiterBox waiter={item} />
+              </div>
+            ))
+          )}
         </div>
       </div>
       <div className="row statistika">

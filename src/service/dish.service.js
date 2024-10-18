@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import {
   getDishesFailure,
   getDishesStart,
@@ -25,14 +26,8 @@ const DishService = {
       dispatch(getDishesSuccess(data));
       if (data) {
         navigate("/dish");
-        dispatch(
-          showToast({
-            status: "success",
-            alert: "Taom muaffaqiyatli qoshildi",
-          })
-        );
-        window.location.reload();
       }
+      toast.success("Taom muaffaqiyatli qoshildi");
     } catch (error) {
       console.log(error);
       dispatch(getDishesFailure());
@@ -44,14 +39,7 @@ const DishService = {
       await axios.put(`/dishes/${categoryId}`, value);
       const { data } = await axios.get(`/dishes/${id}`);
       dispatch(getDishesSuccess(data));
-      if (data) {
-        dispatch(
-          showToast({
-            status: "success",
-            alert: "Taom muaffaqiyatli ozgartirildi",
-          })
-        );
-      }
+      toast.success("Taom muaffaqiyatli ozgartirildi");
     } catch (error) {
       console.log(error);
       dispatch(getDishesFailure());
@@ -63,6 +51,7 @@ const DishService = {
       await axios.delete(`/dishes/${categoryId}`, value);
       const { data } = await axios.get(`/dishes/${id}`);
       dispatch(getDishesSuccess(data));
+      toast.success("Taom muaffaqiyatli ochirildi");
     } catch (error) {
       console.log(error);
       dispatch(getDishesFailure());

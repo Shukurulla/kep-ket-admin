@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { showToast } from "../slice/ui";
 import {
   getUserFailure,
@@ -38,13 +39,8 @@ const UserService = {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.restaurant._id);
         navigate("/home");
-        dispatch(
-          showToast({
-            status: "success",
-            alert: "Profil muaffaqiyatli qoshildi",
-          })
-        );
       }
+      toast.success("Foydalanuvchi muaffaqiyatli qoshildi");
     } catch (error) {
       dispatch(getUserFailure());
 
@@ -61,18 +57,11 @@ const UserService = {
         localStorage.setItem("userId", data.restaurant._id);
         navigate("/home");
         window.location.reload();
-        dispatch(
-          showToast({
-            status: "success",
-            alert: "Profilga muaffaqiyatli kirildi",
-          })
-        );
-      } else {
-        dispatch(getUserFailure(data.error));
+        toast.success("Profilga muaffaqiyatli kirildi");
       }
     } catch (error) {
-      dispatch(getUserFailure(error));
-      console.log(error);
+      dispatch(getUserFailure(error.response.data.message));
+      console.log(error.response.data.message);
     }
   },
   async loginById(dispatch, id, navigate) {
@@ -111,33 +100,15 @@ const UserService = {
       dispatch(getUserFailure());
     }
   },
-  async setting(dispatch, option, navigate) {
+  async settings(dispatch, value, userId) {
     dispatch(getUserStart());
     try {
-      const { data } = await axios.post("/setting", option, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      dispatch(getUserSuccess(data.user));
-      if (data) {
-        navigate("/home");
-        dispatch(
-          showToast({
-            status: "success",
-            alert: "Profil malumotlari ozgartirildi",
-          })
-        );
-      }
+      const { data } = await axios.put(`/restaurants/${userId}`, value);
+      dispatch(getUserSuccess(data));
+      toast.success("Profil muaffaqiyatli ozgartirildi!!!");
     } catch (error) {
       console.log(error);
       dispatch(getUserFailure());
-      dispatch(
-        showToast({
-          status: "error",
-          alert: "Profil ozgartirilmadi",
-        })
-      );
     }
   },
 };

@@ -25,6 +25,8 @@ import Home from "./pages/home/home.jsx";
 import Report from "./pages/report/report.jsx";
 import Waiters from "./pages/waiter/waiters.jsx";
 import Kassa from "./pages/kassa/kassa.jsx";
+import Setting from "./pages/settings/settings.jsx";
+import { Toaster } from "react-hot-toast";
 
 const Redirect = () => {
   const navigate = useNavigate();
@@ -49,7 +51,7 @@ const App = () => {
 
   return (
     <div className="w-[100vw] overflow-x-hidden relative">
-      <Toast />
+      <Toaster />
       <Routes>
         <Route path="/" element={<Redirect />} />
         <Route path="/report" element={<Layaout activPage={<Report />} />} />
@@ -69,6 +71,7 @@ const App = () => {
           path="/promocodes"
           element={<Layaout activPage={<Promocode />} />}
         />
+        <Route path="/setting" element={<Layaout activPage={<Setting />} />} />
         <Route
           path="/category"
           element={<Layaout activPage={<Category />} />}

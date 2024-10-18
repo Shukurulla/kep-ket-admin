@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { getOrderStart } from "../slice/orders.slice.js";
 import {
   getPromoCodeFailure,
@@ -24,6 +25,7 @@ const PromoCodeService = {
       await axios.post(`/promocode/`, value);
       const { data } = await axios.get(`/promocode/all/${id}`);
       dispatch(getPromoCodeSuccess(data));
+      toast.success("Promocode muaffaqiyatli qoshildi");
     } catch (error) {
       console.log(error);
       dispatch(getPromoCodeFailure());
@@ -35,6 +37,7 @@ const PromoCodeService = {
       await axios.put(`/promocode/${id}`, value);
       const { data } = await axios.get(`/promocode/all/${id}`);
       dispatch(getPromoCodeSuccess(data));
+      toast.success("Promocode muaffaqiyatli ozgartirildi");
     } catch (error) {
       console.log(error);
       dispatch(getPromoCodeFailure());
@@ -46,6 +49,7 @@ const PromoCodeService = {
       await axios.delete(`/promocode/${id}`);
       const { data } = await axios.get(`/promocode/all/${id}`);
       dispatch(getPromoCodeSuccess(data));
+      toast.success("Taom muaffaqiyatli ochirildi");
     } catch (error) {
       console.log(error);
       dispatch(getPromoCodeFailure());

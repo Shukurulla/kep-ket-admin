@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import {
   getWaiterFailure,
   getWaiterServiceInfo,
@@ -22,6 +23,7 @@ const WaiterService = {
     try {
       const { data } = await axios.post(`/waiter/`, value);
       dispatch(getWaiterSuccess(data));
+      toast.success("Ofitsiyant muaffaqiyatli qoshildi");
     } catch (error) {
       dispatch(getWaiterFailure());
     }
@@ -31,6 +33,7 @@ const WaiterService = {
     try {
       const { data } = await axios.put(`/waiter/${id}`, value);
       dispatch(getWaiterSuccess(data));
+      toast.success("Ofitsiyant muaffaqiyatli ozgartirildi");
     } catch (error) {
       dispatch(getWaiterFailure());
     }
@@ -39,6 +42,7 @@ const WaiterService = {
     dispatch(getWaiterStart());
     try {
       const { data } = await axios.delete(`/waiter/${id}`);
+      toast.success("Ofitsiyant muaffaqiyatli ochirildi");
       dispatch(getWaiterSuccess(data));
     } catch (error) {
       dispatch(getWaiterFailure());

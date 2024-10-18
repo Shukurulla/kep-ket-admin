@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -20,7 +20,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   const { isLoading, error } = useSelector((state) => state.user);
-
+  const phoneRef = useRef();
   const submitHandler = async (e) => {
     e.preventDefault();
     dispatch(getUserStart());
@@ -28,6 +28,13 @@ const Register = () => {
     formData.append("file", file);
     formData.append("upload_preset", "restoran-order");
     formData.append("cloud_name", "djsdapm3z");
+    function isValidString(str) {
+      // Maxsus belgilarni aniqlash uchun regex
+      const regex = /[ \/&?()[\],!@#$%^*]/;
+
+      // Agar regex mos kelsa false qaytaradi, aks holda true qaytaradi
+      return !regex.test(str);
+    }
 
     await fetch("https://api.cloudinary.com/v1_1/djsdapm3z/image/upload", {
       method: "POST",
@@ -35,28 +42,36 @@ const Register = () => {
     })
       .then((res) => res.json())
       .then(async (data) => {
-        await UserService.postUser(
-          dispatch,
-          {
-            name: fullName,
-            address: address,
-            brand,
-            password,
-            phone,
-            restaurantLogo: data.secure_url,
-            socialLink: [
-              {
-                socialName: "telegram",
-                link: telegram,
-              },
-              {
-                socialName: "instagram",
-                link: instagram,
-              },
-            ],
-          },
-          navigate
-        );
+        if (phone.length < 9) {
+          toast.error("Iltimos telefon raqamini toliq kiriting");
+          phoneRef.current.focus();
+        } else if (isValidString(phone) == false) {
+          toast.error("Iltimos telefon raqamiga simbol kiritmang");
+          phoneRef.current.focus();
+        } else {
+          await UserService.postUser(
+            dispatch,
+            {
+              name: fullName,
+              address: address,
+              brand,
+              password,
+              phone,
+              restaurantLogo: data.secure_url,
+              socialLink: [
+                {
+                  socialName: "telegram",
+                  link: telegram,
+                },
+                {
+                  socialName: "instagram",
+                  link: instagram,
+                },
+              ],
+            },
+            navigate
+          );
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -142,6 +157,7 @@ const Register = () => {
                   <input
                     type="number"
                     value={phone}
+                    ref={phoneRef}
                     onChange={(e) => setPhone(e.target.value)}
                     className="form-control"
                     aria-label="Username"

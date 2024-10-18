@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import {
   getTablesFailure,
   getTablesStart,
@@ -23,6 +24,7 @@ const TableService = {
       await axios.post(`/table/create-table`, value);
       const { data } = await axios.get(`/table/all-tables/${id}`);
       dispatch(getTablesSuccess(data.tables));
+      toast.success("Stol muaffaqiyatli qoshildi");
     } catch (error) {
       console.log(error);
       dispatch(getTablesFailure());
@@ -35,6 +37,7 @@ const TableService = {
 
       const { data } = await axios.get(`/table/all-tables/${id}`);
       dispatch(getTablesSuccess(data.tables));
+      toast.success("Stol muaffaqiyatli ozgartirildi");
     } catch (error) {
       console.log(error);
       dispatch(getTablesFailure());
@@ -46,6 +49,7 @@ const TableService = {
       await axios.delete(`/table/table-delete/${tableId}`);
       const { data } = await axios.get(`/table/all-tables/${id}`);
       dispatch(getTablesSuccess(data.tables));
+      toast.success("Stol muaffaqiyatli ochirildi");
     } catch (error) {
       console.log(error);
       dispatch(getTablesFailure());

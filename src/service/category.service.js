@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import {
   getCategoryFailure,
   getCategoryStart,
@@ -10,8 +11,6 @@ const CategoryService = {
     dispatch(getCategoryStart());
     try {
       const { data } = await axios.get(`/category/all/${id}`);
-      console.log(data);
-
       dispatch(getCategorySuccess(data));
     } catch (error) {
       console.log(error);
@@ -24,6 +23,7 @@ const CategoryService = {
       await axios.post(`/category/`, value);
       const { data } = await axios.get(`category/all/${id}`);
       dispatch(getCategorySuccess(data));
+      toast.success("Kategoriya muaffaqiyatli qoshildi");
     } catch (error) {
       console.log(error);
       dispatch(getCategoryFailure());
@@ -35,6 +35,7 @@ const CategoryService = {
       await axios.put(`/category/${categoryId}`, value);
       const { data } = await axios.get(`category/all/${id}`);
       dispatch(getCategorySuccess(data));
+      toast.success("Kategoriya muaffaqiyatli ozgartirildi");
     } catch (error) {
       console.log(error);
       dispatch(getCategoryFailure());
@@ -46,6 +47,7 @@ const CategoryService = {
       await axios.delete(`/category/${categoryId}`);
       const { data } = await axios.get(`/category/all/${id}`);
       dispatch(getCategorySuccess(data));
+      toast.success("Kategoriya muaffaqiyatli ochirildi");
     } catch (error) {
       console.log(error);
       dispatch(getCategoryFailure());

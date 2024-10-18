@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import UserService from "../../service/user.service";
 import { showToast } from "../../slice/ui";
 import { getUserFailure } from "../../slice/user.slice";
 import "./login.scss";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -12,6 +13,9 @@ const Login = () => {
   const [showAlert, setShowAlert] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate("");
+
+  const usernameRef = useRef();
+  const passwordRef = useRef();
 
   const { user, error, isLoading } = useSelector((state) => state.user);
 
@@ -25,8 +29,14 @@ const Login = () => {
   };
 
   useEffect(() => {
-    setShowAlert(true);
-  }, [error && error != ""]);
+    if (error == "Notog'ri restoran nomi") {
+      toast.error(error);
+      usernameRef.current.focus();
+    } else if (error == "Notog'ri  parol") {
+      toast.error(error);
+      passwordRef.current.focus();
+    }
+  }, [error]);
 
   useEffect(() => {
     setShowAlert(false);
@@ -55,6 +65,7 @@ const Login = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="form-control"
                 aria-label="Username"
+                ref={usernameRef}
                 required
                 aria-describedby="basic-addon1"
               />
@@ -66,6 +77,7 @@ const Login = () => {
               <input
                 type="text"
                 value={password}
+                ref={passwordRef}
                 onChange={(e) => setPassword(e.target.value)}
                 className="form-control"
                 aria-label="Username"

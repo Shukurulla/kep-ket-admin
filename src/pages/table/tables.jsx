@@ -34,7 +34,9 @@ const Tables = () => {
       <Loading />
     </div>
   ) : (
-    <div className="md:p-3 lg:py-[20px] py-[30px] px-[10px] ">
+    <div
+      className={`md:p-3 w-[100%] relative lg:py-[20px] py-[30px] px-[10px] `}
+    >
       {showCreate ? <CreateTable setState={setShowCreate} /> : ""}
       {showEdit ? <EditTable setState={setShowEdit} table={table} /> : ""}
       <h4 className="font-nunito page-label font-[600]">Stollar</h4>

@@ -21,7 +21,7 @@ const CreateTable = ({ setState }) => {
   };
 
   return (
-    <div className="table-wrapper w-[100%] h-[100%] flex items-center justify-center">
+    <div className="table-wrapper w-[100%] h-[90vh] overflow-hidden flex items-center justify-center">
       <form onSubmit={(e) => submitHandler(e)}>
         <div className="row">
           <div className="input col-lg-6 ">

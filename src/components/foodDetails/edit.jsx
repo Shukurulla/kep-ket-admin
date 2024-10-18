@@ -173,7 +173,14 @@ const EditDish = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-center">
+          <div className="flex items-center gap-2 justify-center">
+            <button
+              type="button" // Bekor qilish tugmasi type="button"
+              className="btn btn-secondary"
+              onClick={() => navigate("/dish")}
+            >
+              Bekor qilish
+            </button>
             <button className="btn btn-primary" disabled={isLoading}>
               {isLoading ? "Yuklanmoqda" : "Yuborish"}
             </button>

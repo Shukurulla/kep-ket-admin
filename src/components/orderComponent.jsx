@@ -23,25 +23,34 @@ const OrderComponent = ({ item }) => {
   };
 
   const updateTimer = () => {
-    const now = new Date();
-    const diff = now - createdAt; // Farqni millisekundlarda hisoblash
+    const now = new Date(); // Hozirgi vaqtni oling
+    const diff = now.getTime() - createdAt.getTime(); // Vaqt farqini millisekundlarda hisoblang
 
-    const minutes = Math.floor(diff / (1000 * 60)); // Daqiqalarni hisoblash
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000); // Soniyalarni hisoblash
+    if (diff >= 0) {
+      // Agar farq musbat bo'lsa
+      const minutes = Math.floor(diff / (1000 * 60)); // Daqiqalarni hisoblash
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000); // Soniyalarni hisoblash
 
-    // Rangni daqiqalarga asoslangan holda o'zgartiramiz
-    if (minutes < 3) {
-      setTimeColor("#8CD23C"); // Yashil (3 daqiqagacha)
-    } else if (minutes >= 3 && minutes < 5) {
-      setTimeColor("#F09D21"); // Sariq (3-5 daqiqa oralig'i)
-    } else if (minutes >= 5) {
-      setTimeColor("#D24E3C"); // Qizil (5 daqiqadan oshsa)
+      // Agar vaqt juda kichik bo'lsa, to'g'rilash
+      if (minutes === 0 && seconds === 0) {
+        setTimeDifference("00:01"); // 00:00 dan keyin 00:01 ni ko'rsatish
+      } else {
+        const formattedMinutes = minutes.toString().padStart(2, "0");
+        const formattedSeconds = seconds.toString().padStart(2, "0");
+        setTimeDifference(`${formattedMinutes}:${formattedSeconds}`); // Vaqtni yangilash
+      }
+
+      // Rangni daqiqalarga asoslangan holda o'zgartiramiz
+      if (minutes < 3) {
+        setTimeColor("#8CD23C"); // Yashil (3 daqiqagacha)
+      } else if (minutes >= 3 && minutes < 5) {
+        setTimeColor("#F09D21"); // Sariq (3-5 daqiqa oralig'i)
+      } else if (minutes >= 5) {
+        setTimeColor("#D24E3C"); // Qizil (5 daqiqadan oshsa)
+      }
+    } else {
+      setTimeDifference("00:00"); // Agar farq salbiy bo'lsa, vaqtni 00:00 dan boshlash
     }
-
-    const formattedMinutes = minutes.toString().padStart(2, "0");
-    const formattedSeconds = seconds.toString().padStart(2, "0");
-
-    setTimeDifference(`${formattedMinutes}:${formattedSeconds}`); // Daqiqa:soniyalar formatida ko'rsatish
   };
 
   useEffect(() => {

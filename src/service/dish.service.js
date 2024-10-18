@@ -22,18 +22,18 @@ const DishService = {
     dispatch(getDishesStart());
     try {
       await axios.post(`/dishes/`, value);
-      const { data } = await axios.get(`/dishes/${id}`);
+      const { data } = await axios.get(`/dishes/${value.restourantId}`); // Idni to'g'ri olish uchun `value.restourantId` ishlatildi
       dispatch(getDishesSuccess(data));
-      if (data) {
-        navigate("/dish");
-      }
-      toast.success("Taom muaffaqiyatli qoshildi");
+      navigate("/dish");
+      toast.success("Taom muvaffaqiyatli qo'shildi");
     } catch (error) {
       console.log(error);
       dispatch(getDishesFailure());
+      toast.error("Taomni qo'shishda xatolik yuz berdi");
     }
   },
-  async editDish(dispatch, categoryId, value, navigate) {
+
+  async editDish(dispatch, categoryId, value) {
     dispatch(getDishesStart());
     try {
       await axios.put(`/dishes/${categoryId}`, value);

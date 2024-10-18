@@ -59,11 +59,11 @@ const Dish = () => {
               >
                 <div
                   className="card-image flex p-2 items-center justify-center"
-                  style={{ height: "130px" }}
+                  style={{ height: "160px" }}
                 >
                   <img
                     src={item.image}
-                    className="w-[180px] h-[180px] rounded h-100"
+                    className="w-[100%]  h-[100%] object-center rounded h-100"
                     alt=""
                   />
                 </div>

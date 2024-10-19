@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDishesStart } from "../../slice/dish.slice";
 import DishService from "../../service/dish.service";
 import { useNavigate, useParams } from "react-router-dom";
 import CategoryService from "../../service/category.service.js";
+import toast from "react-hot-toast";
 
 const EditDish = () => {
   const { dishes, isLoading } = useSelector((state) => state.dish);
@@ -22,6 +23,7 @@ const EditDish = () => {
     currentDish?.description || ""
   );
 
+  const priceRef = useRef(null); // Price inputga ref yaratamiz
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -34,43 +36,62 @@ const EditDish = () => {
 
   useEffect(() => {
     CategoryService.getCategory(dispatch);
-  }, []);
+  }, [dispatch]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    dispatch(getDishesStart());
+    const formattedPrice = String(price).replace(/[^0-9]/g, ""); // Convert price to string
 
-    let imageUrl = currentDish?.image;
+    if (isNaN(formattedPrice) || formattedPrice.trim() === "") {
+      priceRef.current.focus();
+      toast.error("Iltimos, faqat raqam kiriting.");
+    } else {
+      dispatch(getDishesStart());
 
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "restoran-order");
-      formData.append("cloud_name", "djsdapm3z");
+      let imageUrl = currentDish?.image;
 
-      const response = await fetch(
-        "https://api.cloudinary.com/v1_1/djsdapm3z/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const data = await response.json();
-      imageUrl = data.secure_url;
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "restoran-order");
+        formData.append("cloud_name", "djsdapm3z");
+
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/djsdapm3z/image/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const data = await response.json();
+        imageUrl = data.secure_url;
+      }
+
+      const selectedCategory = categories.find((c) => c._id === category);
+      if (!selectedCategory) {
+        toast.error("Kategoriya tanlanmagan.");
+        return;
+      }
+      await DishService.editDish(dispatch, id, {
+        name,
+        category: {
+          id: selectedCategory._id,
+          name: selectedCategory.name,
+        },
+        price: formattedPrice, // Make sure the price is formatted correctly
+        description,
+        image: imageUrl,
+        restourantId: localStorage.getItem("userId"),
+      });
+
+      navigate("/dish");
     }
-
-    await DishService.editDish(dispatch, id, {
-      name,
-      category,
-      price,
-      description,
-      image: imageUrl,
-      restourantId: localStorage.getItem("userId"),
-    });
-
-    navigate("/dish");
   };
 
+  const handlePriceChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ""); // Faqat raqamlar qoldiriladi
+    setPrice(value);
+  };
   const changeFile = (e) => {
     setFile(e.target.files[0]);
     setLabelImage(URL.createObjectURL(e.target.files[0]));
@@ -85,10 +106,10 @@ const EditDish = () => {
       <div className="input mt-3">
         <div className="row">
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <div className="input  flex  col-sm-12">
+            <div className="input flex col-sm-12">
               <label
                 htmlFor="food-image"
-                className="max-[200px] md:max-[100%] relative  cursor-pointer mx-auto h-[200px]"
+                className="max-[200px] md:max-[100%] relative cursor-pointer mx-auto h-[200px]"
               >
                 <i className="bi bi-pencil-square absolute bottom-4 right-0 text-[20px]"></i>
                 <img
@@ -105,7 +126,7 @@ const EditDish = () => {
                 <input
                   type="file"
                   onChange={changeFile}
-                  className="form-control "
+                  className="form-control"
                   name="image"
                   id="food-image"
                   aria-describedby="basic-addon1"
@@ -134,7 +155,7 @@ const EditDish = () => {
               <div className="input-group mb-3">
                 <select
                   className="form-control"
-                  value={category.id} // Bind the value to the state
+                  value={category} // Bind the value to the state
                   onChange={(e) => setCategory(e.target.value)}
                 >
                   <option value="" disabled>
@@ -154,8 +175,9 @@ const EditDish = () => {
                 <input
                   type="number"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => handlePriceChange(e)}
                   required
+                  ref={priceRef} // refni o'rnatish
                   className="form-control"
                   placeholder="0"
                 />

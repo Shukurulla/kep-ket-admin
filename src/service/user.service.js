@@ -51,7 +51,9 @@ const UserService = {
     dispatch(getUserStart());
     try {
       const { data } = await axios.post("/restaurants/login", user);
-      if (data.token) {
+      console.log(data);
+
+      if (data?.token) {
         dispatch(getUserSuccess(data.user));
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.restaurant._id);
@@ -60,8 +62,8 @@ const UserService = {
         toast.success("Profilga muaffaqiyatli kirildi");
       }
     } catch (error) {
-      dispatch(getUserFailure(error.response.data.message));
-      console.log(error.response.data.message);
+      dispatch(getUserFailure(error));
+      console.log(error);
     }
   },
   async loginById(dispatch, id, navigate) {

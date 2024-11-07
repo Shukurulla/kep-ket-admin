@@ -4,14 +4,16 @@ import OrderComponent from "../../components/orderComponent.jsx";
 import Loading from "../../components/loading/loading.jsx";
 import OrderService from "../../service/order.service.js";
 import { useNavigate } from "react-router-dom";
+import socket from "../../utilities/socket.config.js";
+import { getOrderSuccess } from "../../slice/orders.slice.js";
 
 const Orders = () => {
   const { orders, isLoading } = useSelector((state) => state.order);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   useEffect(() => {
+    socket.emit("chef_connected", localStorage.getItem("userId"));
     OrderService.getOrder(dispatch);
   }, []);
 
@@ -27,14 +29,14 @@ const Orders = () => {
       <div className="py-[60px] h-[100vh] overflow-x-hidden overflow-y-scroll">
         <div
           className={`row ${
-            orders.filter((c) => c.payment == false).length > 0
+            orders?.filter((c) => c.payment == false).length > 0
               ? "container"
               : ""
           }`}
         >
-          {orders.filter((c) => c.payment == false).length > 0 ? (
+          {orders?.filter((c) => c.payment == false).length > 0 ? (
             orders
-              .filter((c) => c.payment == false)
+              ?.filter((c) => c.payment == false)
               .map((item) => (
                 <div className="col-lg-3 col-md-4 mb-[60px] col-sm-6 col-12">
                   <OrderComponent item={item} />

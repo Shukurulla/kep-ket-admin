@@ -1,12 +1,17 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const WaiterBox = ({ waiter }) => {
   const { waiters } = useSelector((state) => state.waiter);
   const { reports } = useSelector((state) => state.kassa);
+  const navigate = useNavigate();
 
   return (
-    <div className="bg-white p-[16px] rounded-[18px] relative ">
+    <div
+      className="bg-white p-[16px] rounded-[18px] relative "
+      onClick={() => navigate(`/waiter/${waiter.waiterId}`)}
+    >
       <div className="row">
         <div className="col-lg-4 col-md-4 col-sm-4 col-4">
           <img
@@ -32,7 +37,7 @@ const WaiterBox = ({ waiter }) => {
             </span>
             <span className="font-nunito text-[12px] font-[600]">
               {new Date(
-                waiters.filter((c) => c._id == waiter.waiterId)[0].createdAt
+                waiters.filter((c) => c._id == waiter.waiterId)[0]?.createdAt
               ).toLocaleDateString()}
             </span>
           </div>

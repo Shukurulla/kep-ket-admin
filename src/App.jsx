@@ -27,6 +27,7 @@ import Waiters from "./pages/waiter/waiters.jsx";
 import Kassa from "./pages/kassa/kassa.jsx";
 import Setting from "./pages/settings/settings.jsx";
 import { Toaster } from "react-hot-toast";
+import WaiterNotifications from "./pages/waiterNotification.jsx";
 
 const Redirect = () => {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ const App = () => {
       <Toaster />
       <Routes>
         <Route path="/" element={<Redirect />} />
+        <Route path="/waiter/:id" element={<WaiterNotifications />} />
         <Route path="/report" element={<Layaout activPage={<Report />} />} />
         <Route path="/home" element={<Layaout activPage={<Home />} />} />
         <Route path="/login" element={<Login />} />

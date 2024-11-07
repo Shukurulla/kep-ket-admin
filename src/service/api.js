@@ -1,6 +1,7 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "https://kep-ket-api.vercel.app/api";
+axios.defaults.baseURL = "http://45.134.39.117:1234/api/";
+axios.defaults.timeout = 30000;
 axios.interceptors.request.use((option) => {
   const token = localStorage.getItem("token")
     ? localStorage.getItem("token")

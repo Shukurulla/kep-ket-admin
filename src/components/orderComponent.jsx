@@ -1,67 +1,94 @@
-import React, { useEffect, useState } from "react";
-import axios from "../service/api";
+import React, { useEffect, useState, useRef } from "react";
+import { io } from "socket.io-client";
 import checkImage from "../../public/check-image.png";
-import orderTime from "../../public/order-time.png";
-import { useDispatch } from "react-redux";
-import OrderService from "../service/order.service.js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DishService from "../service/dish.service.js";
+import socket from "../utilities/socket.config.js";
 
 const OrderComponent = ({ item }) => {
-  const createdAt = new Date(item.createdAt); // Qo'shilgan vaqtni oling
   const [timeDifference, setTimeDifference] = useState("00:00");
   const [timeColor, setTimeColor] = useState("");
   const [selectFood, setSelectFood] = useState([]);
+  const { orders } = useSelector((state) => state.order);
   const { dishes } = useSelector((state) => state.dish);
   const dispatch = useDispatch();
   const { waiters } = useSelector((state) => state.waiter);
+  const [foods, setFoods] = useState(item.items);
+  console.log(item);
 
-  const findDish = (dish) => {
-    const thisDish = dishes.filter((c) => c._id == dish.id)[0];
+  // Socket ulanish
+  useEffect(() => {
+    // Socket ulanishni yaratish
 
-    return thisDish;
-  };
+    // Restaurant ID ni olish
+    const restaurantId = item.restaurantId;
 
-  const updateTimer = () => {
-    const now = new Date(); // Hozirgi vaqtni oling
-    const diff = now.getTime() - createdAt.getTime(); // Vaqt farqini millisekundlarda hisoblang
-
-    if (diff >= 0) {
-      // Agar farq musbat bo'lsa
-      const minutes = Math.floor(diff / (1000 * 60)); // Daqiqalarni hisoblash
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000); // Soniyalarni hisoblash
-
-      // Agar vaqt juda kichik bo'lsa, to'g'rilash
-      if (minutes === 0 && seconds === 0) {
-        setTimeDifference("00:01"); // 00:00 dan keyin 00:01 ni ko'rsatish
-      } else {
-        const formattedMinutes = minutes.toString().padStart(2, "0");
-        const formattedSeconds = seconds.toString().padStart(2, "0");
-        setTimeDifference(`${formattedMinutes}:${formattedSeconds}`); // Vaqtni yangilash
-      }
-
-      // Rangni daqiqalarga asoslangan holda o'zgartiramiz
-      if (minutes < 3) {
-        setTimeColor("#8CD23C"); // Yashil (3 daqiqagacha)
-      } else if (minutes >= 3 && minutes < 5) {
-        setTimeColor("#F09D21"); // Sariq (3-5 daqiqa oralig'i)
-      } else if (minutes >= 5) {
-        setTimeColor("#D24E3C"); // Qizil (5 daqiqadan oshsa)
-      }
-    } else {
-      setTimeDifference("00:00"); // Agar farq salbiy bo'lsa, vaqtni 00:00 dan boshlash
+    // Restaurantga qo'shilish
+    if (restaurantId) {
+      socket.emit("join_restaurant", restaurantId);
     }
-  };
+    console.log(orders);
+
+    // Socket event'larni tinglash
+    socket.on("get_new_order", (newOrder) => {
+      console.log("New order received:", newOrder);
+    });
+
+    socket.on("get_order_update", (updatedOrder) => {
+      console.log("Order update received:", updatedOrder);
+      if (updatedOrder._id === item._id) {
+        setFoods(updatedOrder.items);
+      }
+    });
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    return () => {
+      if (socket) {
+        socket.off("get_new_order");
+        socket.off("get_order_update");
+        socket.off("connect");
+        socket.off("connect_error");
+        // socket.disconnect();
+      }
+    };
+  }, [item.restaurantId, item._id]);
 
   useEffect(() => {
     DishService.getDish(dispatch);
+    const timer = setInterval(updateTimer, 1000);
+    return () => clearInterval(timer);
+  }, [dispatch]);
 
-    const timer = setInterval(updateTimer, 1000); // Har bir soniyada yangilanadi
-    return () => clearInterval(timer); // Komponent unmount qilinganda timer to'xtaydi
-  }, []);
+  const updateTimer = () => {
+    const now = new Date();
+    const createdAt = new Date(item.createdAt);
+    const diff = now.getTime() - createdAt.getTime();
+
+    if (diff >= 0) {
+      const minutes = Math.floor(diff / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setTimeDifference(
+        `${minutes.toString().padStart(2, "0")}:${seconds
+          .toString()
+          .padStart(2, "0")}`
+      );
+
+      if (minutes < 3) setTimeColor("#8CD23C");
+      else if (minutes >= 3 && minutes < 5) setTimeColor("#F09D21");
+      else setTimeColor("#D24E3C");
+    }
+  };
 
   const selectionHandler = (food) => {
-    const arr = new Array(food);
+    const find = dishes.filter((c) => c._id == food.foodId)[0];
 
     const findFood = item.prepared
       .concat(selectFood)
@@ -74,10 +101,7 @@ const OrderComponent = ({ item }) => {
     ) {
       return setSelectFood(selectFood);
     } else {
-      setSelectFood(selectFood.concat(arr));
-      if (selectFood.length === 0) {
-        setSelectFood(arr);
-      }
+      setSelectFood([...selectFood, { ...food, foodImage: find.image }]);
     }
   };
 
@@ -88,9 +112,9 @@ const OrderComponent = ({ item }) => {
     },
     waiter: {
       id: item.waiter.id,
-      name: item.waiter.name
-        ? item.waiter.name
-        : waiters.filter((c) => c._id == item.waiter.id)[0]?.username,
+      name:
+        item.waiter.name ||
+        waiters.find((w) => w._id === item.waiter.id)?.username,
     },
     orderId: item._id,
     meals: selectFood,
@@ -98,55 +122,49 @@ const OrderComponent = ({ item }) => {
     restaurantId: item.restaurantId,
   };
 
-  const submitHandler = () => {
-    OrderService.postNotification(dispatch, schema);
-    console.log(schema);
-  };
-
-  const allSelect = () => {
-    for (let i = 0; i < item.item.length; i++) {}
+  const submitHandler = async () => {
+    await socket.emit("send_notification", schema);
+    socket.on("get_notification", (notification) => {
+      console.log("Yangi bildirishnoma:", notification); // Eski bildirishnomalarga yangi bildirishnomani qo'shish
+    });
   };
 
   return (
     <div className="relative bg-white p-4 rounded-[30px]">
-      <div className="waiter-name absolute top-[0] left-[50%] font-[] translate-x-[-50%] translate-y-[-50%] bg-[#EDF2F6] p-2 rounded-[10px] border-[1px] border-[#000] ">
-        <p className="font-[700]">
-          {" "}
-          {item.waiter?.name
-            ? item.waiter.name
-            : waiters.filter((c) => c._id == item.waiter.id)[0]?.username}
-        </p>
-      </div>
       <div className="order-header mt-3 flex items-center justify-between">
-        <div className="table-number p-[20px] bg-[#EDF2F6] rounded-[20px] text-[20px] font-[700] border-[1px] border-[#DEE2E6]">
-          №{item.tableNumber.number}
+        <div className="waiter-name absolute top-[0] left-[50%] font-[] translate-x-[-50%] translate-y-[-50%] bg-[#EDF2F6] p-2 rounded-[10px] border-[1px] border-[#000] ">
+          <p className="font-[700]">
+            {item.waiter?.name
+              ? item.waiter.name
+              : waiters.filter((c) => c._id == item.waiter.id)[0]?.username}
+          </p>
         </div>
-        <div className="header-option">
-          <div className="params flex justify-end">
-            <div
-              onClick={() => allSelect()}
-              className="w-[25px]  border-[1px] border-[#949393] h-[25px] cursor-pointer flex items-center justify-center bg-[#EDF2F6] rounded-[5px]"
-            >
-              <img src={checkImage} className="w-[15px] h-[15px] " alt="" />
-            </div>
+        <div className="order-header mt-3 flex items-center justify-between">
+          <div className="table-number p-[20px] bg-[#EDF2F6] rounded-[20px] text-[20px] font-[700] border-[1px] border-[#DEE2E6]">
+            №{item.tableNumber.number}
           </div>
-          <div
-            style={{ color: timeColor }}
-            className={`text-[${timeColor}] mt-2 flex items-center gap-[10px]`}
-          >
-            {timeDifference} <i className="bi bi-stopwatch"></i>
+          <div className="header-option">
+            <div className="params flex justify-end">
+              <div className="w-[25px] border-[1px] border-[#949393] h-[25px] cursor-pointer flex items-center justify-center bg-[#EDF2F6] rounded-[5px]">
+                <img src={checkImage} className="w-[15px] h-[15px]" alt="" />
+              </div>
+            </div>
+            <div
+              style={{ color: timeColor }}
+              className={`text-[${timeColor}] mt-2 flex items-center gap-[10px]`}
+            >
+              {timeDifference} <i className="bi bi-stopwatch"></i>
+            </div>
           </div>
         </div>
       </div>
       <div className="items">
         {dishes &&
-          item.items.map((food) => (
-            <div className="flex justify-between mt-2" key={food._id}>
-              {" "}
-              {/* food._id kalit sifatida ishlatilmoqda */}
-              <p className="font-[700] text-[#393939]">{food.dish.name}</p>{" "}
-              <span className="flex gap-2 items-center  ">
-                {food.quantity}{" "}
+          foods.map((food) => (
+            <div key={food._id} className="flex justify-between mt-2">
+              <p>{food.dish.name}</p>
+              <span className="flex gap-2 items-center">
+                {food.quantity}
                 <div
                   onClick={() =>
                     selectionHandler({
@@ -154,30 +172,18 @@ const OrderComponent = ({ item }) => {
                       foodId: food.dish.id,
                       foodPrice: food.dish.price,
                       quantity: food.quantity,
-                      foodImage: findDish(food.dish).image,
+                      foodImage: food.dish.image,
                       mealId: food._id,
                     })
                   }
-                  className="w-[25px] m-0 p-0 h-[25px] border-[1px] border-[#949393] cursor-pointer flex items-center justify-center bg-[#EDF2F6] rounded-[5px]"
+                  className="w-[25px] h-[25px] cursor-pointer"
                 >
-                  {item.prepared.filter((c) => c.mealId == food._id).length >
-                  0 ? (
+                  {selectFood.some((c) => c.mealId === food._id) && (
                     <img
                       src={checkImage}
-                      className="w-[15px] h-[15px]"
                       alt=""
-                    />
-                  ) : (
-                    ""
-                  )}{" "}
-                  {selectFood.filter((c) => c.mealId == food._id).length > 0 ? (
-                    <img
-                      src={checkImage}
                       className="w-[15px] h-[15px]"
-                      alt=""
                     />
-                  ) : (
-                    ""
                   )}
                 </div>
               </span>
@@ -188,7 +194,7 @@ const OrderComponent = ({ item }) => {
       <div className="flex justify-center mt-2">
         <button
           onClick={() => submitHandler()}
-          disabled={selectFood.length == 0}
+          disabled={selectFood.length === 0}
           className="btn btn-success"
         >
           Yuborish

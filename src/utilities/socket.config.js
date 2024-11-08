@@ -2,8 +2,8 @@ import { io } from "socket.io-client";
 
 const SOCKET_URL =
   process.env.NODE_ENV === "production"
-    ? "http://45.134.39.117:1234" // Backend domeningizni qo'ying
-    : "http://45.134.39.117:1234";
+    ? "https://45.134.39.117/" // Backend domeningizni qo'ying
+    : "https://45.134.39.117/";
 
 const createSocketConnection = () => {
   const socket = io(SOCKET_URL, {

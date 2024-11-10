@@ -12,22 +12,17 @@ const id = localStorage.getItem("userId");
 const UserService = {
   async getUser(dispatch, navigate) {
     dispatch(getUserStart());
-    try {
-      const { data } = await axios.get(`/restaurants/${id}`);
-      dispatch(getUserSuccess(data.restaurant));
-      if (data) {
-        if (window.location.pathname === "/login") {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("userId", data.restaurant._id);
-          navigate("/home");
-        }
+    const { data } = await axios.get(`/restaurants/${id}`);
+    dispatch(getUserSuccess(data.restaurant));
+    if (data) {
+      if (window.location.pathname === "/login") {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.restaurant._id);
+        navigate("/home");
       }
-
-      return data;
-    } catch ({ response }) {
-      localStorage.clear();
-      dispatch(getUserFailure());
     }
+
+    return data;
   },
   async postUser(dispatch, user, navigate) {
     dispatch(getUserStart());

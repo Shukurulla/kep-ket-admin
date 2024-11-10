@@ -4,6 +4,7 @@ import checkImage from "../../public/check-image.png";
 import { useDispatch, useSelector } from "react-redux";
 import DishService from "../service/dish.service.js";
 import socket from "../utilities/socket.config.js";
+import { getOrderSuccess } from "../slice/orders.slice.js";
 
 const OrderComponent = ({ item }) => {
   const [timeDifference, setTimeDifference] = useState("00:00");
@@ -14,7 +15,6 @@ const OrderComponent = ({ item }) => {
   const dispatch = useDispatch();
   const { waiters } = useSelector((state) => state.waiter);
   const [foods, setFoods] = useState(item.items);
-  console.log(item);
 
   // Socket ulanish
   useEffect(() => {
@@ -27,11 +27,17 @@ const OrderComponent = ({ item }) => {
     if (restaurantId) {
       socket.emit("join_restaurant", restaurantId);
     }
-    console.log(orders);
 
     // Socket event'larni tinglash
     socket.on("get_new_order", (newOrder) => {
       console.log("New order received:", newOrder);
+      dispatch(
+        getOrderSuccess(
+          [...orders, newOrder].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          )
+        )
+      );
     });
 
     socket.on("get_order_update", (updatedOrder) => {

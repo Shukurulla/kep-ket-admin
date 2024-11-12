@@ -2,8 +2,8 @@ import { io } from "socket.io-client";
 
 const SOCKET_URL =
   process.env.NODE_ENV === "production"
-    ? "https://45.134.39.117/api"
-    : "https://45.134.39.117/"; // Localda test qilish uchun
+    ? "https://kepketapi.onrender.com"
+    : "https://kepketapi.onrender.com"; // Localda test qilish uchun
 
 const createSocketConnection = () => {
   const socket = io(SOCKET_URL, {

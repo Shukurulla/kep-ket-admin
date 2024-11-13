@@ -71,9 +71,10 @@ const Orders = () => {
       <div className="py-[60px] h-[100vh] overflow-x-hidden overflow-y-scroll">
         <div
           className={`row ${
-            orders.length > 0 &&
-            orders?.filter((c) => c.payment == false).length > 0
-              ? "container"
+            orders.length > 0
+              ? orders?.filter((c) => c.payment == false).length > 0
+                ? "container"
+                : ""
               : ""
           }`}
         >

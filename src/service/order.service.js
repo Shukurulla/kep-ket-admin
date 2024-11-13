@@ -14,7 +14,6 @@ const OrderService = {
     try {
       const { data } = await axios.get(`/orders/show-orders/${id}`);
       dispatch(getOrderSuccess(data));
-
       // Yangi buyurtmalarni qabul qilish
     } catch (error) {
       console.log(error);

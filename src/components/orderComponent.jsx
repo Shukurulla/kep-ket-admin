@@ -1,11 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import checkImage from "../../public/check-image.png";
 import { useDispatch, useSelector } from "react-redux";
 import DishService from "../service/dish.service.js";
 import socket from "../utilities/socket.config.js";
 import { getOrderSuccess } from "../slice/orders.slice.js";
-
+import notificationSound from "../../public/notification-sound.wav";
+import { toast } from "react-hot-toast";
+import axios from "../service/api.js";
+import OrderService from "../service/order.service.js";
 const OrderComponent = ({ item }) => {
   const [timeDifference, setTimeDifference] = useState("00:00");
   const [timeColor, setTimeColor] = useState("");
@@ -15,62 +18,75 @@ const OrderComponent = ({ item }) => {
   const dispatch = useDispatch();
   const { waiters } = useSelector((state) => state.waiter);
   const [foods, setFoods] = useState(item.items);
+  const [prepared, setPrepared] = useState(item.prepared); // Notifications state
 
-  // Socket ulanish
   useEffect(() => {
-    // Socket ulanishni yaratish
-
-    // Restaurant ID ni olish
     const restaurantId = item.restaurantId;
 
-    // Restaurantga qo'shilish
     if (restaurantId) {
       socket.emit("join_restaurant", restaurantId);
     }
 
-    // Socket event'larni tinglash
-    socket.on("get_new_order", (newOrder) => {
-      console.log("New order received:", newOrder);
-      dispatch(
-        getOrderSuccess(
-          [...orders, newOrder].sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          )
-        )
-      );
-    });
+    const handleNewOrder = (newOrder) => {
+      console.log("Yangi buyurtma qabul qilindi:", newOrder);
+      Notification.requestPermission().then((perm) => {
+        if (perm === "granted") {
+          const notification = new Notification("Yangi buyurtma", {
+            body: "Buyurtma",
+            icon: "logo",
+            tag: "Xush kelibsiz",
+          });
+          notification.addEventListener("error", (e) => {
+            alert("Xatolik yuz berdi");
+          });
+        }
+      });
+      dispatch(getOrderSuccess([...orders, newOrder]));
+    };
 
-    socket.on("get_order_update", (updatedOrder) => {
-      console.log("Order update received:", updatedOrder);
+    const handleOrderUpdate = (updatedOrder) => {
+      console.log("Buyurtma yangilanishi qabul qilindi:", updatedOrder);
       if (updatedOrder._id === item._id) {
         setFoods(updatedOrder.items);
       }
-    });
+      showNotification(
+        "Buyurtma yangilandi",
+        `Buyurtma ID: ${updatedOrder._id}`
+      );
+    };
 
-    socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
-    });
-
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
+    socket.on("get_new_order", handleNewOrder);
+    socket.on("get_order_update", handleOrderUpdate);
 
     return () => {
-      if (socket) {
-        socket.off("get_new_order");
-        socket.off("get_order_update");
-        socket.off("connect");
-        socket.off("connect_error");
-        // socket.disconnect();
-      }
+      socket.off("get_new_order", handleNewOrder);
+      socket.off("get_order_update", handleOrderUpdate);
     };
-  }, [item.restaurantId, item._id]);
+  }, [item.restaurantId, item._id, dispatch]);
+
+  function showNotification(title, message) {
+    Notification.requestPermission().then((perm) => {
+      if (perm == "granted") {
+        const notification = new Notification(title, {
+          body: message,
+          data: { hello: "Hello" },
+          icon: "logo",
+          tag: "Welcome message",
+        });
+        notification.addEventListener("error", (e) => {
+          alert("error");
+        });
+      }
+    });
+  }
+
+  // Bu yerda showNotification funksiyasini chaqirish orqali notification chiqariladi
 
   useEffect(() => {
     DishService.getDish(dispatch);
     const timer = setInterval(updateTimer, 1000);
     return () => clearInterval(timer);
-  }, [dispatch]);
+  }, [dispatch, orders]);
 
   const updateTimer = () => {
     const now = new Date();
@@ -101,13 +117,16 @@ const OrderComponent = ({ item }) => {
       .filter((c) => c.mealId == food.mealId);
 
     if (findFood.length > 0) {
-      return setSelectFood(selectFood.filter((c) => c.foodId !== food.id));
+      setSelectFood(selectFood.filter((c) => c.foodId !== food.id));
     } else if (
       item.prepared.filter((c) => c.mealId == food.mealId).length > 0
     ) {
-      return setSelectFood(selectFood);
+      setSelectFood(selectFood.filter((c) => c.mealId != food.mealId));
     } else {
       setSelectFood([...selectFood, { ...food, foodImage: find.image }]);
+    }
+    if (selectFood.filter((c) => c.foodId == food.foodId).length > 0) {
+      setSelectFood(selectFood.filter((c) => c.foodId !== food.foodId));
     }
   };
 
@@ -127,13 +146,22 @@ const OrderComponent = ({ item }) => {
     totalPrice: item.totalPrice,
     restaurantId: item.restaurantId,
   };
-
   const submitHandler = async () => {
     await socket.emit("send_notification", schema);
-    socket.on("get_notification", (notification) => {
-      console.log("Yangi bildirishnoma:", notification); // Eski bildirishnomalarga yangi bildirishnomani qo'shish
+    await socket.on("get_notification", (notification) => {
+      if (notification?.meals) {
+        OrderService.getOrder(dispatch);
+        setSelectFood([]); // Faqat ushbu buyurtma uchun selectFood yangilab qo‘yiladi
+        toast.success("Buyurtma jo'natildi");
+      }
     });
   };
+
+  useEffect(() => {
+    return () => {
+      socket.off("get_notification"); // Cleanup listener on unmount
+    };
+  }, []);
 
   return (
     <div className="relative bg-white p-4 rounded-[30px]">
@@ -166,32 +194,43 @@ const OrderComponent = ({ item }) => {
       </div>
       <div className="items">
         {dishes &&
-          foods.map((food) => (
+          item.items.map((food) => (
             <div key={food._id} className="flex justify-between mt-2">
               <p>{food.dish.name}</p>
               <span className="flex gap-2 items-center">
                 {food.quantity}
-                <div
-                  onClick={() =>
-                    selectionHandler({
-                      foodName: food.dish.name,
-                      foodId: food.dish.id,
-                      foodPrice: food.dish.price,
-                      quantity: food.quantity,
-                      foodImage: food.dish.image,
-                      mealId: food._id,
-                    })
-                  }
-                  className="w-[25px] h-[25px] cursor-pointer"
-                >
-                  {selectFood.some((c) => c.mealId === food._id) && (
+                {item.prepared.filter((c) => c.mealId == food._id).length >
+                0 ? (
+                  <div className="w-[25px] h-[25px] cursor-pointer">
                     <img
                       src={checkImage}
                       alt=""
                       className="w-[15px] h-[15px]"
                     />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() =>
+                      selectionHandler({
+                        foodName: food.dish.name,
+                        foodId: food.dish.id,
+                        foodPrice: food.dish.price,
+                        quantity: food.quantity,
+                        foodImage: food.dish.image,
+                        mealId: food._id,
+                      })
+                    }
+                    className="w-[25px] h-[25px] cursor-pointer"
+                  >
+                    {selectFood.some((c) => c.mealId === food._id) && (
+                      <img
+                        src={checkImage}
+                        alt=""
+                        className="w-[15px] h-[15px]"
+                      />
+                    )}
+                  </div>
+                )}
               </span>
             </div>
           ))}

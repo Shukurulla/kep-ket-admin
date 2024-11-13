@@ -28,6 +28,7 @@ import Kassa from "./pages/kassa/kassa.jsx";
 import Setting from "./pages/settings/settings.jsx";
 import { Toaster } from "react-hot-toast";
 import WaiterNotifications from "./pages/waiterNotification.jsx";
+import socket from "./utilities/socket.config.js";
 
 const Redirect = () => {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    socket.emit("chef_connected", localStorage.getItem("userId"));
     if (localStorage.getItem("token")) {
       UserService.getUser(dispatch, navigate);
       WaiterService.getWaiters(dispatch);

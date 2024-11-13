@@ -13,9 +13,51 @@ const Orders = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
-    socket.emit("chef_connected", localStorage.getItem("userId"));
     OrderService.getOrder(dispatch);
   }, []);
+  useEffect(() => {
+    // Faqat birinchi yuklanishda bildirishnoma uchun ruxsatni so'rash
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission().then((perm) => {
+        if (perm === "granted") {
+          console.log("Bildirishnomalar uchun ruxsat berildi");
+        }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    socket.on("get_new_order", (newOrder) => {
+      console.log("New order received:", newOrder);
+      Notification.requestPermission().then((perm) => {
+        if (perm == "granted") {
+          const notification = new Notification("Yangi buyurtma", {
+            body: "buyurtma",
+            data: { hello: "Hello" },
+            icon: "logo",
+            tag: "Welcome message",
+          });
+          notification.addEventListener("error", (e) => {
+            alert("error");
+          });
+        }
+      });
+    });
+
+    socket.on("get_order_update", (updatedOrder) => {
+      console.log("Order update received:", updatedOrder);
+
+      showNotification(
+        "Buyurtma yangilandi",
+        `Buyurtma ID: ${updatedOrder._id}`
+      );
+    });
+
+    return () => {
+      socket.off("get_new_order");
+      socket.off("get_order_update");
+    };
+  }, [socket, dispatch]);
 
   return isLoading ? (
     <div className="w-[100%] h-[100vh] bg-white flex items-center justify-center">
@@ -29,14 +71,17 @@ const Orders = () => {
       <div className="py-[60px] h-[100vh] overflow-x-hidden overflow-y-scroll">
         <div
           className={`row ${
+            orders.length > 0 &&
             orders?.filter((c) => c.payment == false).length > 0
               ? "container"
               : ""
           }`}
         >
-          {orders?.filter((c) => c.payment == false).length > 0 ? (
+          {orders.length > 0 &&
+          orders?.filter((c) => c.payment == false).length > 0 ? (
             orders
               ?.filter((c) => c.payment == false)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map((item) => (
                 <div className="col-lg-3 col-md-4 mb-[60px] col-sm-6 col-12">
                   <OrderComponent item={item} />

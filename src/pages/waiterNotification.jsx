@@ -7,7 +7,6 @@ const WaiterNotifications = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    // Serverga ulanish va ofitsiant ID ni socket orqali jo'natish
     socket.emit("waiter_connected", id);
 
     // `get_notification` hodisasini faqat bir marta qo'shish

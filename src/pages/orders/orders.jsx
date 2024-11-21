@@ -19,7 +19,7 @@ const Orders = () => {
     if (Notification.permission !== "granted") {
       Notification.requestPermission().then((perm) => {
         if (perm === "granted") {
-          console.log("Bildirishnomalar uchun ruxsat berildi");
+          console.log("Bildirishnomalar uchun ruxsatberildi");
         }
       });
     }

@@ -5,7 +5,6 @@ import Loading from "../../components/loading/loading.jsx";
 import OrderService from "../../service/order.service.js";
 import { useNavigate } from "react-router-dom";
 import socket from "../../utilities/socket.config.js";
-import { getOrderSuccess } from "../../slice/orders.slice.js";
 
 const Orders = () => {
   const { orders, isLoading } = useSelector((state) => state.order);
